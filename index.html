@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: Google STEP Internship for ECE Students</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as a user-centric journey, transforming the linear report into a task-oriented, single-page dashboard. The structure guides the student from initial discovery ("What is STEP?") to actionable steps ("Your Action Plan"). Sections are thematic (Eligibility, Application, Preparation, Intern Life) rather than mirroring report chapters. This non-linear, scannable structure with a persistent top navigation allows users to either follow the guided path or jump directly to their area of interest, enhancing usability and information retention for a student who needs quick, clear answers. Key interactions like checklists, clickable process diagrams, and tabbed content break down dense information into manageable, engaging chunks. -->
+    <!-- Visualization & Content Choices: 
+        - Hero: Goal=Engage. Method=Large text. Justification=Immediate clarity.
+        - Eligibility: Goal=Inform/Self-Assess. Method=Grid of cards with icons (HTML/CSS). Interaction=Hover effects. Justification=More scannable and engaging than a list.
+        - Application Process: Goal=Explain a sequence. Method=Clickable flowchart diagram (HTML/CSS). Interaction=Clicking a step reveals details in a modal. Justification=Visually clarifies the process flow, making it more intuitive than text.
+        - Preparation: Goal=Organize complex info. Method=Tabbed interface. Interaction=Clicking tabs switches content. Justification=Prevents information overload.
+        - Technical Skills Chart: Goal=Compare topic importance. Method=Horizontal Bar Chart (Chart.js). Interaction=Tooltips on hover. Justification=Provides a quick visual hierarchy for study priorities.
+        - Intern Life: Goal=Provide insight. Method=Card-based layout. Interaction=Simple hover effects. Justification=Breaks down the experience into thematic, digestible pieces.
+        - Action Plan: Goal=Summarize/Action. Method=Styled checklist. Justification=Inherently actionable and provides a clear takeaway. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfcfb;
+            color: #44403c;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: #0d9488;
+            border-bottom-color: #0d9488;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .tab-button.active {
+            background-color: #0d9488;
+            color: #ffffff;
+        }
+        .step-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .step-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-40 border-b border-stone-200">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="#" class="text-xl font-bold text-teal-700">Google STEP Guide</a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#intro" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Intro</a>
+                        <a href="#eligibility" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Eligibility</a>
+                        <a href="#application" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Application</a>
+                        <a href="#preparation" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Preparation</a>
+                        <a href="#intern-life" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Intern Life</a>
+                        <a href="#action-plan" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-stone-600">Action Plan</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="intro" class="py-20 sm:py-24 text-center bg-teal-50 border-b border-teal-100">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight text-teal-900">Your Journey to a Google STEP Internship</h1>
+                <p class="mt-4 max-w-3xl mx-auto text-lg md:text-xl text-stone-600">An interactive guide for first-year ECE students to navigate Google's Student Training in Engineering Program, from application to offer.</p>
+                <div class="mt-8">
+                    <a href="#eligibility" class="inline-block bg-teal-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-teal-700 transition-colors">Start Your Journey</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="eligibility" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-800 sm:text-4xl">Is the STEP Internship for You?</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-600">The STEP internship is designed for early-career students with a passion for technology. This section helps you quickly check if you meet the core requirements based on your academics, technical skills, and personal attributes. See how you stack up!</p>
+                </div>
+                <div class="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <div class="bg-white p-6 rounded-lg border border-stone-200 shadow-sm">
+                        <div class="text-3xl text-teal-600">🎓</div>
+                        <h3 class="mt-4 text-xl font-semibold text-stone-800">Academic Standing</h3>
+                        <ul class="mt-2 space-y-2 text-stone-600 list-disc list-inside">
+                            <li>1st or 2nd year Bachelor's student.</li>
+                            <li>At least two years remaining in degree post-internship.</li>
+                            <li>Studying CS, EE, or a related field.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg border border-stone-200 shadow-sm">
+                        <div class="text-3xl text-teal-600">💻</div>
+                        <h3 class="mt-4 text-xl font-semibold text-stone-800">Technical Skills</h3>
+                        <ul class="mt-2 space-y-2 text-stone-600 list-disc list-inside">
+                            <li>Proficiency in Python, Java, C++, or C.</li>
+                            <li>Completed at least one CS course.</li>
+                            <li>Strong grasp of Data Structures & Algorithms.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg border border-stone-200 shadow-sm">
+                        <div class="text-3xl text-teal-600">🤝</div>
+                        <h3 class="mt-4 text-xl font-semibold text-stone-800">Key Attributes</h3>
+                        <ul class="mt-2 space-y-2 text-stone-600 list-disc list-inside">
+                            <li>Excellent communication skills.</li>
+                            <li>Collaborative team player.</li>
+                            <li>Strong problem-solving abilities.</li>
+                            <li>Eagerness to learn and take initiative.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="application" class="py-16 sm:py-20 bg-stone-100">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-800 sm:text-4xl">The Application Toolkit</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-600">Getting your application right is the first major step. This timeline breaks down the entire process, from finding the opening to the final offer. Click on each step to reveal essential details and pro-tips for crafting a submission that stands out.</p>
+                </div>
+                <div class="mt-12 flow-root">
+                    <div class="overflow-x-auto">
+                        <div class="relative flex items-center justify-center p-4">
+                            <div class="absolute top-1/2 left-0 w-full h-1 bg-teal-200"></div>
+                            <div class="relative flex justify-between w-full max-w-4xl">
+                                <div class="step-item text-center cursor-pointer" onclick="showModal('modal-1')">
+                                    <div class="relative flex items-center justify-center w-16 h-16 mx-auto bg-white rounded-full border-4 border-teal-600 shadow-md">
+                                        <span class="text-2xl font-bold text-teal-600">1</span>
+                                    </div>
+                                    <p class="mt-2 font-semibold">Find Opening</p>
+                                </div>
+                                <div class="step-item text-center cursor-pointer" onclick="showModal('modal-2')">
+                                    <div class="relative flex items-center justify-center w-16 h-16 mx-auto bg-white rounded-full border-4 border-teal-600 shadow-md">
+                                        <span class="text-2xl font-bold text-teal-600">2</span>
+                                    </div>
+                                    <p class="mt-2 font-semibold">Prepare Docs</p>
+                                </div>
+                                <div class="step-item text-center cursor-pointer" onclick="showModal('modal-3')">
+                                    <div class="relative flex items-center justify-center w-16 h-16 mx-auto bg-white rounded-full border-4 border-teal-600 shadow-md">
+                                        <span class="text-2xl font-bold text-teal-600">3</span>
+                                    </div>
+                                    <p class="mt-2 font-semibold">Apply Early</p>
+                                </div>
+                                 <div class="step-item text-center cursor-pointer" onclick="showModal('modal-4')">
+                                    <div class="relative flex items-center justify-center w-16 h-16 mx-auto bg-white rounded-full border-4 border-teal-600 shadow-md">
+                                        <span class="text-2xl font-bold text-teal-600">4</span>
+                                    </div>
+                                    <p class="mt-2 font-semibold">Interview</p>
+                                </div>
+                                <div class="step-item text-center cursor-pointer" onclick="showModal('modal-5')">
+                                    <div class="relative flex items-center justify-center w-16 h-16 mx-auto bg-white rounded-full border-4 border-teal-600 shadow-md">
+                                        <span class="text-2xl font-bold text-teal-600">5</span>
+                                    </div>
+                                    <p class="mt-2 font-semibold">Get Offer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="preparation" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-800 sm:text-4xl">Mastering the Interview</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-600">Preparation is the key to success. This section is your command center for interview prep, covering everything from technical challenges to behavioral questions. Use the tabs below to focus your efforts and build the skills and confidence needed to ace your interviews.</p>
+                </div>
+                <div class="mt-12 max-w-4xl mx-auto">
+                    <div class="mb-4 flex space-x-2 p-1 bg-stone-100 rounded-lg">
+                        <button class="tab-button w-full py-2.5 text-sm font-medium leading-5 rounded-lg focus:outline-none" onclick="openTab(event, 'tech-prep')">Technical Prep</button>
+                        <button class="tab-button w-full py-2.5 text-sm font-medium leading-5 rounded-lg focus:outline-none" onclick="openTab(event, 'behavioral-prep')">Behavioral Prep</button>
+                        <button class="tab-button w-full py-2.5 text-sm font-medium leading-5 rounded-lg focus:outline-none" onclick="openTab(event, 'profile-building')">Profile Building</button>
+                    </div>
+                    <div id="tech-prep" class="content-section p-4">
+                        <h3 class="text-xl font-semibold mb-4 text-center">Focus Your Technical Practice</h3>
+                        <p class="text-center text-stone-600 mb-6">Google's technical interviews heavily emphasize core CS fundamentals. This chart highlights the most critical areas. Use it to guide your study sessions on platforms like LeetCode and GeeksforGeeks.</p>
+                        <div class="chart-container">
+                            <canvas id="dsaChart"></canvas>
+                        </div>
+                    </div>
+                    <div id="behavioral-prep" class="content-section p-4">
+                        <h3 class="text-xl font-semibold mb-2">Showcase Your "Googleyness"</h3>
+                        <p class="mb-4 text-stone-600">Behavioral questions assess your personality, work style, and alignment with Google's culture. Prepare to talk about your experiences with collaboration, problem-solving, and leadership.</p>
+                        <div class="bg-teal-50 border-l-4 border-teal-500 text-teal-800 p-4 rounded-r-lg">
+                            <h4 class="font-bold">Pro-Tip: Use the STAR Method</h4>
+                            <p>Structure your answers using STAR: <br>
+                                <span class="font-semibold">S</span>ituation: Set the scene. <br>
+                                <span class="font-semibold">T</span>ask: Describe your goal. <br>
+                                <span class="font-semibold">A</span>ction: Explain what you did. <br>
+                                <span class="font-semibold">R</span>esult: Share the outcome.</p>
+                        </div>
+                    </div>
+                    <div id="profile-building" class="content-section p-4">
+                        <h3 class="text-xl font-semibold mb-4">Build a Standout Profile</h3>
+                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-stone-50 p-4 rounded-lg border">
+                                <h4 class="font-semibold">Personal Projects</h4>
+                                <p class="text-stone-600 text-sm">Create projects that showcase your skills. Document them well on GitHub with a clear README.</p>
+                            </div>
+                             <div class="bg-stone-50 p-4 rounded-lg border">
+                                <h4 class="font-semibold">Open Source & Hackathons</h4>
+                                <p class="text-stone-600 text-sm">Contribute to open-source or participate in hackathons to demonstrate teamwork and practical coding ability.</p>
+                            </div>
+                             <div class="bg-stone-50 p-4 rounded-lg border">
+                                <h4 class="font-semibold">Online Presence</h4>
+                                <p class="text-stone-600 text-sm">Maintain a professional LinkedIn profile. Network with recruiters and other interns.</p>
+                            </div>
+                              <div class="bg-stone-50 p-4 rounded-lg border">
+                                <h4 class="font-semibold">Certificates (Optional)</h4>
+                                <p class="text-stone-600 text-sm">Google Career Certificates can show initiative and a commitment to learning job-ready skills.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="intern-life" class="py-16 sm:py-20 bg-stone-100">
+             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-800 sm:text-4xl">A Day in the Life of a STEP Intern</h2>
+                    <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-600">Ever wonder what it's really like to be a STEP intern? This section provides a glimpse into the daily experience, from the impactful projects you'll tackle to the unique mentorship structure that ensures you learn and grow every day.</p>
+                </div>
+                <div class="mt-12 grid gap-8 md:grid-cols-3">
+                    <div class="bg-white p-6 rounded-lg border border-stone-200 shadow-sm">
+                        <h3 class="text-xl font-semibold text-stone-800">Impactful Projects</h3>
+                        <p class="mt-2 text-stone-600">Work on real Google products, contributing to code that affects millions of users. Projects are designed for learning and are integrated into Google's core services, spanning areas like Search, Android, and Google Classroom.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg border border-stone-200 shadow-sm">
+                        <h3 class="text-xl font-semibold text-stone-800">Unique Mentorship</h3>
+                        <p class="mt-2 text-stone-600">You'll work in a pair with another intern, guided by two experienced Google engineers ("Hosts"). This structure fosters collaboration and provides a strong support system for technical and professional growth.</p>
+                    </div>
+                     <div class="bg-white p-6 rounded-lg border border-stone-200 shadow-sm">
+                        <h3 class="text-xl font-semibold text-stone-800">Growth & Development</h3>
+                        <p class="mt-2 text-stone-600">Your days will include coding, team meetings, 1:1s with your mentors, and attending tech talks by Google leaders. It's a dynamic environment focused on expanding your skills and professional network.</p>
+                    </div>
+                </div>
+             </div>
+        </section>
+
+        <section id="action-plan" class="py-16 sm:py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-800 sm:text-4xl">Your Action Plan</h2>
+                     <p class="mt-4 max-w-2xl mx-auto text-lg text-stone-600">You've explored the program, now it's time to act. This is your personal checklist to guide your preparation over the coming months. Focus on these key areas to build a strong foundation and maximize your chances of success.</p>
+                </div>
+                <div class="mt-12 max-w-3xl mx-auto space-y-4">
+                    <div class="flex items-start p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+                        <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">1</div>
+                        <p class="ml-4 text-stone-700 font-medium">Excel in your foundational CS courses (Programming, DSA).</p>
+                    </div>
+                     <div class="flex items-start p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+                        <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">2</div>
+                        <p class="ml-4 text-stone-700 font-medium">Master one core programming language (e.g., Python, C++, Java).</p>
+                    </div>
+                     <div class="flex items-start p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+                        <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">3</div>
+                        <p class="ml-4 text-stone-700 font-medium">Build a portfolio of 1-2 quality personal projects on GitHub.</p>
+                    </div>
+                     <div class="flex items-start p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+                        <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">4</div>
+                        <p class="ml-4 text-stone-700 font-medium">Practice coding problems regularly, especially DSA fundamentals.</p>
+                    </div>
+                     <div class="flex items-start p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+                        <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">5</div>
+                        <p class="ml-4 text-stone-700 font-medium">Practice articulating your thought process during mock interviews.</p>
+                    </div>
+                     <div class="flex items-start p-4 bg-white rounded-lg border border-stone-200 shadow-sm">
+                        <div class="flex-shrink-0 h-6 w-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">6</div>
+                        <p class="ml-4 text-stone-700 font-medium">Tailor your resume and apply as soon as applications open in the fall.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-stone-800">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-stone-400 text-sm">
+            <p>This is an unofficial guide created for informational purposes. All information is based on the provided source report. For official details, please visit the Google Careers website.</p>
+        </div>
+    </footer>
+
+    <div id="modal-container" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center" onclick="closeAllModals()">
+        <div id="modal-1" class="modal-content bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md" onclick="event.stopPropagation()">
+            <h3 class="text-xl font-bold mb-2">Step 1: Find the Opening</h3>
+            <p class="text-stone-600">The primary channel is the official Google Careers website. Applications for summer internships typically open in the fall of the preceding year. Set up alerts and check frequently. Also, engage with Google's campus outreach programs.</p>
+            <button class="mt-4 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700" onclick="closeAllModals()">Close</button>
+        </div>
+        <div id="modal-2" class="modal-content bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md" onclick="event.stopPropagation()">
+            <h3 class="text-xl font-bold mb-2">Step 2: Prepare Your Documents</h3>
+            <ul class="space-y-2 text-stone-600 list-disc list-inside">
+                <li><strong>Resume:</strong> One page, highlight projects, skills, and coursework. Quantify achievements.</li>
+                <li><strong>Transcript:</strong> An unofficial or official transcript is required.</li>
+                <li><strong>Cover Letter:</strong> Optional but highly recommended. Tailor it to Google and the STEP role.</li>
+            </ul>
+            <button class="mt-4 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700" onclick="closeAllModals()">Close</button>
+        </div>
+        <div id="modal-3" class="modal-content bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md" onclick="event.stopPropagation()">
+            <h3 class="text-xl font-bold mb-2">Step 3: Apply Early</h3>
+            <p class="text-stone-600">The application process is highly competitive, and positions fill up quickly on a rolling basis. Submitting your application as soon as the portal opens significantly increases your chances of being considered.</p>
+            <button class="mt-4 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700" onclick="closeAllModals()">Close</button>
+        </div>
+        <div id="modal-4" class="modal-content bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md" onclick="event.stopPropagation()">
+            <h3 class="text-xl font-bold mb-2">Step 4: The Interview Stage</h3>
+            <p class="text-stone-600">After an initial online assessment, you'll face technical and behavioral interviews. Technical rounds focus on DSA, while behavioral rounds assess "Googleyness". After passing interviews, you enter a project matching phase with different teams.</p>
+            <button class="mt-4 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700" onclick="closeAllModals()">Close</button>
+        </div>
+        <div id="modal-5" class="modal-content bg-white rounded-lg shadow-xl p-6 w-11/12 max-w-md" onclick="event.stopPropagation()">
+            <h3 class="text-xl font-bold mb-2">Step 5: Receive an Offer</h3>
+            <p class="text-stone-600">If a team selects you during project matching, and you pass the final review, you'll receive an official offer! This includes details about your team, location, and stipend.</p>
+            <button class="mt-4 bg-teal-600 text-white py-2 px-4 rounded hover:bg-teal-700" onclick="closeAllModals()">Close</button>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sections = document.querySelectorAll('main section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            function updateActiveLink() {
+                let index = sections.length;
+                while(--index && window.scrollY + 100 < sections[index].offsetTop) {}
+                
+                navLinks.forEach((link) => link.classList.remove('active'));
+                const activeLink = document.querySelector(`.nav-link[href="#${sections[index].id}"]`);
+                if(activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }
+
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink();
+
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            document.querySelector('.tab-button').click();
+
+            const ctx = document.getElementById('dsaChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Arrays & Strings', 'Linked Lists', 'Trees & Graphs', 'Stacks & Queues', 'Sorting & Searching', 'Dynamic Programming'],
+                    datasets: [{
+                        label: 'Importance in Interviews',
+                        data: [95, 85, 90, 75, 88, 70],
+                        backgroundColor: [
+                            'rgba(13, 148, 136, 0.6)',
+                            'rgba(15, 118, 110, 0.6)',
+                            'rgba(17, 94, 89, 0.6)',
+                            'rgba(12, 74, 75, 0.6)',
+                             'rgba(4, 120, 87, 0.6)',
+                             'rgba(6, 95, 70, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgb(13, 148, 136)',
+                            'rgb(15, 118, 110)',
+                            'rgb(17, 94, 89)',
+                            'rgb(12, 74, 75)',
+                            'rgb(4, 120, 87)',
+                            'rgb(6, 95, 70)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                             grid: {
+                                color: 'rgba(200, 200, 200, 0.2)'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `  Focus Level: ${context.raw}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        function openTab(evt, tabName) {
+            let i, contentSections, tabButtons;
+            contentSections = document.getElementsByClassName("content-section");
+            for (i = 0; i < contentSections.length; i++) {
+                contentSections[i].style.display = "none";
+            }
+            tabButtons = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].className = tabButtons[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        const modalContainer = document.getElementById('modal-container');
+        const modals = document.querySelectorAll('.modal-content');
+        
+        function showModal(modalId) {
+            modalContainer.style.display = 'flex';
+            modals.forEach(modal => modal.style.display = 'none');
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeAllModals() {
+            modalContainer.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
